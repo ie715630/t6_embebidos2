@@ -17,6 +17,9 @@
 #include "task.h"
 #include "event_groups.h"
 
+// Default I2C 7-bit address of device if SDO = GND
+
+#define BMI160_SLAVE_ADDR 0x68
 
 #define reg_gyro_x_lo 0x0C
 #define reg_gyro_x_hi 0x0D
@@ -39,12 +42,12 @@ typedef struct {
 
 /* Inicialización de BMI160 */
 
-void BMI160_I2C_initialization(void *args);
+void bmi160_I2C_initialization(void *args);
 
 /* Lectura de los valores del acelerometro */
-bmi160_raw_data_t BMI160_i2c_read_acc(void);
+bmi160_raw_data_t bmi160_i2c_read_acc(void);
 
 /* Lectura de los valores del girsocopio */
-bmi160_raw_data_t BMI160_i2c_read_gyr(void);
+bmi160_raw_data_t bmi160_i2c_read_gyr(void);
 
 #endif /* T6_EMBEBIDOS2_BMI160_H_ */

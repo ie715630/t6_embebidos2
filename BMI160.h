@@ -17,6 +17,20 @@
 #include "task.h"
 #include "event_groups.h"
 
+
+#define reg_gyro_x_lo 0x0C
+#define reg_gyro_x_hi 0x0D
+#define reg_gyro_y_lo 0x0E
+#define reg_gyro_y_hi 0x0F
+#define reg_gyro_z_lo 0x10
+#define reg_gyro_z_hi 0x11
+#define reg_acc_x_lo  0x12
+#define reg_acc_x_hi  0x13
+#define reg_acc_y_lo  0x14
+#define reg_acc_y_hi  0x15
+#define reg_acc_z_lo  0x16
+#define reg_acc_z_hi  0x17
+
 typedef struct {
 	int16_t x;
 	int16_t y;

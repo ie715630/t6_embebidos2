@@ -11,11 +11,28 @@ void bmi160_I2C_initialization(void *args)
 {
 	parameters_task_t parameters_task = *((parameters_task_t*)args);
 
-	rtos_i2c_config_t i2c_config;
+	init_i2c0_with_default_config();
+
+	uint8_t dataToWrite = 0x00;
+	uint8_t dataRead = 0x00;
+
+	i2c_multiple_read(BMI160_SLAVE_ADDR, 0, &dataRead, 1);
+
+	dataToWrite = ACCEL_NORMAL_MODE;
+	i2c_multiple_write(BMI160_SLAVE_ADDR, &dataToWrite, 1);
+
+	dataToWrite = GYROS_NORMAL_MODE;
+	i2c_multiple_write(BMI160_SLAVE_ADDR, &dataToWrite, 1);
+
+	xTaskCreate(data_acquisition_task, 		"data_acquisition_task", 	  800, (void*)&parameters_task, configMAX_PRIORITIES, NULL);
+	xTaskCreate(Ahrs_send_UART_angles_task, "Ahrs_send_UART_angles_task", 800, (void*)&parameters_task, configMAX_PRIORITIES, NULL);
+
+	vTaskDelay(portMAX_DELAY);
 
 }
 
-bmi160_raw_data_t bmi160_i2c_read_acc(void) {
+bmi160_raw_data_t bmi160_i2c_read_acc(void)
+{
 	bmi160_raw_data_t data_acc;
 
 	uint8_t data_x_lo = 0;

@@ -14,6 +14,8 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 
+#define SERIAL_PORTS 3
+
 typedef struct
 {
 	uint8_t is_initialized;
@@ -51,7 +53,6 @@ freertos_i2c_flag_t init_i2c0_with_default_config(void)
 
     return freertos_i2c_success;
 }
-
 void fsl_i2c_callback(I2C_Type *base, i2c_master_handle_t *handle,
                              status_t status, void *userData)
 {

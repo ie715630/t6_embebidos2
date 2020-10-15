@@ -17,8 +17,10 @@
 #include "task.h"
 #include "event_groups.h"
 
-// Default I2C 7-bit address of device if SDO = GND
+#define PIN_SCL_PTC10 (10U)
+#define PIN_SDA_PTC11 (11)
 
+// Default I2C 7-bit address of device if SDO = GND
 #define BMI160_SLAVE_ADDR 0x68
 
 #define ACCEL_NORMAL_MODE 0x11
@@ -58,5 +60,7 @@ bmi160_raw_data_t bmi160_i2c_read_acc(void);
 
 /* Lectura de los valores del girsocopio */
 bmi160_raw_data_t bmi160_i2c_read_gyr(void);
+
+void data_ac
 
 #endif /* T6_EMBEBIDOS2_BMI160_H_ */

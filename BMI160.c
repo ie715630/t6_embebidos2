@@ -7,6 +7,14 @@
 
 #define BMI160_PRINTF_OFF 1
 
+void bmi160_I2C_initialization(void *args)
+{
+	parameters_task_t parameters_task = *((parameters_task_t*)args);
+
+	rtos_i2c_config_t i2c_config;
+
+}
+
 bmi160_raw_data_t bmi160_i2c_read_acc(void) {
 	bmi160_raw_data_t data_acc;
 

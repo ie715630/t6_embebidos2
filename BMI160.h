@@ -61,6 +61,4 @@ bmi160_raw_data_t bmi160_i2c_read_acc(void);
 /* Lectura de los valores del girsocopio */
 bmi160_raw_data_t bmi160_i2c_read_gyr(void);
 
-void data_ac
-
 #endif /* T6_EMBEBIDOS2_BMI160_H_ */

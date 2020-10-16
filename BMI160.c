@@ -36,15 +36,15 @@ void bmi160_I2C_initialization(void *args)
 bmi160_raw_data_t bmi160_i2c_read_acc(void)
 {
 	bmi160_raw_data_t data_acc;
-	uint64_t raw_acc_data = 0;
+	uint8_t raw_acc_data[6];
 	uint16_t x_data;
 	uint16_t y_data;
 	uint16_t z_data;
 
 	i2c_multiple_read(BMI160_SLAVE_ADDR, reg_acc_x_lo, &raw_acc_data , 6);
-	x_data = raw_acc_data & 0xffff;
-	y_data = (raw_acc_data >> 16) & 0xffff;
-	z_data = (raw_acc_data >> 32) & 0xffff;
+	x_data = raw_acc_data[0] & raw_acc_data[1]<<8;
+	y_data = raw_acc_data[2] & raw_acc_data[3]<<8;
+	z_data = raw_acc_data[4] & raw_acc_data[5]<<8;
 	data_acc.x = x_data;
 	data_acc.y = y_data;
 	data_acc.z = z_data;
@@ -60,14 +60,14 @@ bmi160_raw_data_t bmi160_i2c_read_acc(void)
 
 bmi160_raw_data_t bmi160_i2c_read_gyr(void) {
 	bmi160_raw_data_t data_gyro;
-	uint64_t raw_gyro_data = 0;
+	uint8_t raw_gyro_data[6];
 	uint16_t x_data;
 	uint16_t y_data;
 	uint16_t z_data;
 	i2c_multiple_read(BMI160_SLAVE_ADDR, reg_gyro_x_lo, &raw_gyro_data , 6);
-	x_data = raw_gyro_data & 0xffff;
-	y_data = (raw_gyro_data >> 16) & 0xffff;
-	z_data = (raw_gyro_data >> 32) & 0xffff;
+	x_data = raw_gyro_data[0] & raw_gyro_data[1]<<8;
+	y_data = raw_gyro_data[2] & raw_gyro_data[3]<<8;
+	z_data = raw_gyro_data[4] & raw_gyro_data[5]<<8;
 	data_gyro.x = x_data;
 	data_gyro.y = y_data;
 	data_gyro.z = z_data;

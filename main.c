@@ -34,22 +34,15 @@ void init_BMI160(void *parameters)
 	vTaskSuspend(NULL);
 }
 
-void read_acc(void *parameters)
+void read_data(void *parameters)
 {
 	bmi160_raw_data_t acc_data;
-	while(1)
-	{
-		acc_data = bmi160_i2c_read_acc();
-		PRINTF("Data from acc:  x = %d  y = %d  z = %d \n", acc_data.x, acc_data.y, acc_data.z );
-	}
-}
-
-void read_gyro(void *parameters)
-{
 	bmi160_raw_data_t gyro_data;
 	while(1)
 	{
+		acc_data = bmi160_i2c_read_acc();
 		gyro_data = bmi160_i2c_read_gyr();
+		PRINTF("Data from acc:  x = %d  y = %d  z = %d \n", acc_data.x, acc_data.y, acc_data.z );
 		PRINTF("Data from gyro:  x = %d  y = %d  z = %d \n", gyro_data.x, gyro_data.y, gyro_data.z );
 	}
 }
@@ -63,8 +56,7 @@ int main(void) {
     BOARD_InitDebugConsole();
 
     xTaskCreate(init_BMI160, "init_BMI160", 110, NULL, 1, NULL);
-    xTaskCreate(read_acc, "read_acc", 110, NULL, 1, NULL);
-    xTaskCreate(read_gyro, "read_gyro", 110, NULL, 1, NULL);
+    xTaskCreate(read_data, "read_data", 110, NULL, 1, NULL);
 
     vTaskStartScheduler();
 

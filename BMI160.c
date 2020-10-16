@@ -15,24 +15,23 @@ freertos_bmi_flag_t bmi160_i2c_initialization(void)
 	freertos_i2c_flag_t i2c_flag;
 	i2c_flag = init_i2c0_with_default_config();
 
+	vTaskDelay(pdMS_TO_TICKS(10));
+
 	if (freertos_i2c_success == i2c_flag)
 	{
 		bmi_flag = freertos_bmi160_success;
 	}
 
 
-	uint8_t dataToWrite[2] = {0, 0};
-	uint8_t dataRead = 0x00;
-
-	dataToWrite[0] = 0x7E;
-
-	i2c_multiple_read(BMI160_SLAVE_ADDR, 0, &dataRead, 1);
+	uint8_t dataToWrite[2] = {0x7E, 0x00};
 
 	dataToWrite[1] = ACCEL_NORMAL_MODE;
 	i2c_multiple_write(BMI160_SLAVE_ADDR, dataToWrite, 2);
+	vTaskDelay(pdMS_TO_TICKS(100));
 
 	dataToWrite[1] = GYROS_NORMAL_MODE;
 	i2c_multiple_write(BMI160_SLAVE_ADDR, dataToWrite, 2);
+	vTaskDelay(pdMS_TO_TICKS(100));
 
 	return bmi_flag;
 }
@@ -46,9 +45,9 @@ bmi160_raw_data_t bmi160_i2c_read_acc(void)
 	uint16_t z_data;
 
 	i2c_multiple_read(BMI160_SLAVE_ADDR, reg_acc_x_lo, raw_acc_data , 6);
-	x_data = raw_acc_data[0] & raw_acc_data[1]<<8;
-	y_data = raw_acc_data[2] & raw_acc_data[3]<<8;
-	z_data = raw_acc_data[4] & raw_acc_data[5]<<8;
+	x_data = raw_acc_data[0] | raw_acc_data[1]<<8;
+	y_data = raw_acc_data[2] | raw_acc_data[3]<<8;
+	z_data = raw_acc_data[4] | raw_acc_data[5]<<8;
 	data_acc.x = x_data;
 	data_acc.y = y_data;
 	data_acc.z = z_data;
@@ -69,9 +68,9 @@ bmi160_raw_data_t bmi160_i2c_read_gyr(void) {
 	uint16_t y_data;
 	uint16_t z_data;
 	i2c_multiple_read(BMI160_SLAVE_ADDR, reg_gyro_x_lo, raw_gyro_data , 6);
-	x_data = raw_gyro_data[0] & raw_gyro_data[1]<<8;
-	y_data = raw_gyro_data[2] & raw_gyro_data[3]<<8;
-	z_data = raw_gyro_data[4] & raw_gyro_data[5]<<8;
+	x_data = raw_gyro_data[0] | raw_gyro_data[1]<<8;
+	y_data = raw_gyro_data[2] | raw_gyro_data[3]<<8;
+	z_data = raw_gyro_data[4] | raw_gyro_data[5]<<8;
 	data_gyro.x = x_data;
 	data_gyro.y = y_data;
 	data_gyro.z = z_data;

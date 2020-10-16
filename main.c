@@ -21,7 +21,16 @@ SemaphoreHandle_t i2c_initilized;
 
 void init_BMI160(void *parameters)
 {
-	bmi160_i2c_initialization();
+	freertos_bmi_flag_t init_flag = freertos_bmi160_success;
+	init_flag = bmi160_i2c_initialization();
+	if(freertos_bmi160_success == init_flag)
+	{
+		PRINTF("BMI160 Inicializado\n");
+	}
+	else
+	{
+		PRINTF("ERROR AL INICIALIZAR\n");
+	}
 	vTaskSuspend(NULL);
 }
 

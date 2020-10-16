@@ -9,9 +9,17 @@
 
 #include "BMI160.h"
 
-void bmi160_i2c_initialization(void)
+freertos_bmi_flag_t bmi160_i2c_initialization(void)
 {
-	init_i2c0_with_default_config();
+	freertos_bmi_flag_t bmi_flag = freertos_bmi160_fail;
+	freertos_i2c_flag_t i2c_flag;
+	i2c_flag = init_i2c0_with_default_config();
+
+	if (freertos_i2c_success == i2c_flag)
+	{
+		bmi_flag = freertos_bmi160_success;
+	}
+
 
 	uint8_t dataToWrite = 0x00;
 	uint8_t dataRead = 0x00;
@@ -24,7 +32,7 @@ void bmi160_i2c_initialization(void)
 	dataToWrite = GYROS_NORMAL_MODE;
 	i2c_multiple_write(BMI160_SLAVE_ADDR, &dataToWrite, 1);
 
-	vTaskDelay(portMAX_DELAY);
+	return bmi_flag;
 }
 
 bmi160_raw_data_t bmi160_i2c_read_acc(void)

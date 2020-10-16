@@ -48,6 +48,11 @@ typedef struct {
 	int16_t z;
 }bmi160_raw_data_t;
 
+typedef enum {
+    freertos_bmi160_success,
+    freertos_bmi160_fail
+} freertos_bmi_flag_t;
+
 typedef struct
 {
 	SemaphoreHandle_t mutex_ADQUISITION_freertos;
@@ -56,7 +61,7 @@ typedef struct
 } parameters_task_t;
 
 /* Inicialización de BMI160 */
-void bmi160_i2c_initialization(void);
+freertos_bmi_flag_t bmi160_i2c_initialization(void);
 
 /* Lectura de los valores del acelerometro */
 bmi160_raw_data_t bmi160_i2c_read_acc(void);

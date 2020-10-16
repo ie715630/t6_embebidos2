@@ -16,7 +16,6 @@
 #include "semphr.h"
 #include "task.h"
 #include "event_groups.h"
-#include "freertos_uart.h"
 
 
 #define PIN_SCL_PTC10 (10U)
@@ -57,7 +56,7 @@ typedef struct
 } parameters_task_t;
 
 /* Inicialización de BMI160 */
-void bmi160_I2C_initialization(void *args);
+void bmi160_i2c_initialization(void);
 
 /* Lectura de los valores del acelerometro */
 bmi160_raw_data_t bmi160_i2c_read_acc(void);

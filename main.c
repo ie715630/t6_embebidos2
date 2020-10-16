@@ -12,12 +12,38 @@
 #include "fsl_i2c.h"
 #include "semphr.h"
 #include "freertos_i2c.h"
-#include "freertos_uart.h"
+#include "BMI160.h"
 
-static void init_i2c_module(void * args);
-static void transfer_data(void * args);
+//static void init_i2c_module(void * args);
+//static void transfer_data(void * args);
 
 SemaphoreHandle_t i2c_initilized;
+
+void init_BMI160(void *parameters)
+{
+	bmi160_i2c_initialization();
+	vTaskSuspend(NULL);
+}
+
+void read_acc(void *parameters)
+{
+	bmi160_raw_data_t acc_data;
+	while(1)
+	{
+		acc_data = bmi160_i2c_read_acc();
+		PRINTF("Data from acc:  x = %d  y = %d  z = %d \n", acc_data.x, acc_data.y, acc_data.z );
+	}
+}
+
+void read_gyro(void *parameters)
+{
+	bmi160_raw_data_t gyro_data;
+	while(1)
+	{
+		gyro_data = bmi160_i2c_read_gyr();
+		PRINTF("Data from gyro:  x = %d  y = %d  z = %d \n", gyro_data.x, gyro_data.y, gyro_data.z );
+	}
+}
 
 int main(void) {
 
@@ -27,10 +53,9 @@ int main(void) {
     BOARD_InitBootPeripherals();
     BOARD_InitDebugConsole();
 
-    i2c_initilized = xSemaphoreCreateBinary();
-
-    xTaskCreate(init_i2c_module, "init i2c", 100, NULL, 1, NULL);
-    xTaskCreate(transfer_data, "I2C transfer", 500, NULL, 1, NULL);
+    xTaskCreate(init_BMI160, "init_BMI160", 110, NULL, 1, NULL);
+    xTaskCreate(read_acc, "read_acc", 110, NULL, 1, NULL);
+    xTaskCreate(read_gyro, "read_gyro", 110, NULL, 1, NULL);
 
     vTaskStartScheduler();
 
@@ -40,10 +65,11 @@ int main(void) {
     return 0 ;
 }
 
+/*
 static void init_i2c_module(void * args)
 {
 	init_i2c0_with_default_config();
-	/* 10mS for BMI startup */
+	// 10mS for BMI startup
 	vTaskDelay(pdMS_TO_TICKS(10));
 
 	for(;;)
@@ -73,5 +99,5 @@ static void transfer_data(void * args)
 		PRINTF("%X\t%X\t%X\t%X\t%X\t%X\n\r", rx_data[0], rx_data[1], rx_data[2], rx_data[3], rx_data[4], rx_data[5]);
 		vTaskDelay(pdMS_TO_TICKS(300));
 	}
-
 }
+*/

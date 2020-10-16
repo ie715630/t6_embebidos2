@@ -19,6 +19,8 @@
 
 SemaphoreHandle_t i2c_initilized;
 
+SemaphoreHandle_t semaphoreInit;
+
 void init_BMI160(void *parameters)
 {
 	freertos_bmi_flag_t init_flag = freertos_bmi160_success;
@@ -26,6 +28,7 @@ void init_BMI160(void *parameters)
 	if(freertos_bmi160_success == init_flag)
 	{
 		PRINTF("BMI160 Inicializado\n");
+		xSemaphoreGive(semaphoreInit);
 	}
 	else
 	{
@@ -38,6 +41,7 @@ void read_data(void *parameters)
 {
 	bmi160_raw_data_t acc_data;
 	bmi160_raw_data_t gyro_data;
+	xSemaphoreTake(semaphoreInit, portMAX_DELAY);
 	while(1)
 	{
 		acc_data = bmi160_i2c_read_acc();

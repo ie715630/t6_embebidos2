@@ -21,16 +21,18 @@ freertos_bmi_flag_t bmi160_i2c_initialization(void)
 	}
 
 
-	uint8_t dataToWrite = 0x00;
+	uint8_t dataToWrite[2] = {0, 0};
 	uint8_t dataRead = 0x00;
+
+	dataToWrite[0] = 0x7E;
 
 	i2c_multiple_read(BMI160_SLAVE_ADDR, 0, &dataRead, 1);
 
-	dataToWrite = ACCEL_NORMAL_MODE;
-	i2c_multiple_write(BMI160_SLAVE_ADDR, &dataToWrite, 1);
+	dataToWrite[1] = ACCEL_NORMAL_MODE;
+	i2c_multiple_write(BMI160_SLAVE_ADDR, dataToWrite, 2);
 
-	dataToWrite = GYROS_NORMAL_MODE;
-	i2c_multiple_write(BMI160_SLAVE_ADDR, &dataToWrite, 1);
+	dataToWrite[1] = GYROS_NORMAL_MODE;
+	i2c_multiple_write(BMI160_SLAVE_ADDR, dataToWrite, 2);
 
 	return bmi_flag;
 }

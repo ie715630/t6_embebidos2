@@ -12,6 +12,7 @@
 #include "fsl_i2c.h"
 #include "semphr.h"
 #include "freertos_i2c.h"
+#include "freertos_uart.h"
 
 static void init_i2c_module(void * args);
 static void transfer_data(void * args);

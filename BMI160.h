@@ -16,6 +16,8 @@
 #include "semphr.h"
 #include "task.h"
 #include "event_groups.h"
+#include "freertos_uart.h"
+
 
 #define PIN_SCL_PTC10 (10U)
 #define PIN_SDA_PTC11 (11)
@@ -38,6 +40,8 @@
 #define reg_acc_y_hi  0x15
 #define reg_acc_z_lo  0x16
 #define reg_acc_z_hi  0x17
+
+#define AHRS_IMU_SAMPLE_TIME 	20
 
 typedef struct {
 	int16_t x;

@@ -26,11 +26,10 @@ void bmi160_I2C_initialization(void *args)
 	dataToWrite = GYROS_NORMAL_MODE;
 	i2c_multiple_write(BMI160_SLAVE_ADDR, &dataToWrite, 1);
 
-	xTaskCreate(data_acquisition_task, 		"data_acquisition_task", 	  800, (void*)&parameters_task, configMAX_PRIORITIES, NULL);
-	xTaskCreate(Ahrs_send_UART_angles_task, "Ahrs_send_UART_angles_task", 800, (void*)&parameters_task, configMAX_PRIORITIES, NULL);
+	xTaskCreate(data_acquisition_task,		"data_acquisition_task",	800, (void*)&parameters_task, configMAX_PRIORITIES, NULL);
+	xTaskCreate(uart_initialization_task, 	"uart_initialization_task",	800, (void*)&parameters_task, configMAX_PRIORITIES, NULL);
 
 	vTaskDelay(portMAX_DELAY);
-
 }
 
 bmi160_raw_data_t bmi160_i2c_read_acc(void)
@@ -79,4 +78,55 @@ bmi160_raw_data_t bmi160_i2c_read_gyr(void) {
 #endif
 
 	return data_gyro;
+}
+
+bmi160_raw_data_t g_int16data_acc;
+bmi160_raw_data_t g_int16data_gyr;
+
+void data_acquisition_task(void * args)
+{
+	TickType_t xLastWakeTime = xTaskGetTickCount();
+	parameters_task_t parameters_task = *((parameters_task_t*)args);
+
+	while (1) {
+		xSemaphoreTake(parameters_task.mutex_ADQUISITION_freertos, portMAX_DELAY);
+
+		g_int16data_acc = bmi160_i2c_read_acc();	// Read IMU accelerometer
+		g_int16data_gyr = bmi160_i2c_read_gyr();	// Read IMU gyroscope
+
+#ifndef AHRS_PRINTF_OFF
+		PRINTF("AHRS  -  Accel en x: %i \n", g_int16data_acc.x);
+		PRINTF("AHRS  -  Accel en y: %i \n", g_int16data_acc.y);
+		PRINTF("AHRS  -  Accel en z: %i \n", g_int16data_acc.z);
+
+		PRINTF("AHRS  -  Gyros en x: %i \n", g_int16data_gyr.x);
+		PRINTF("AHRS  -  Gyros en y: %i \n", g_int16data_gyr.y);
+		PRINTF("AHRS  -  Gyros en z: %i \n", g_int16data_gyr.z);
+#endif
+
+		xSemaphoreGive(parameters_task.mutex_ADQUISITION_freertos);
+		vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(AHRS_IMU_SAMPLE_TIME));
+	}
+}
+
+void uart_initialization_task(void *args)
+{
+	parameters_task_t parameters_task = *((parameters_task_t*)args);
+
+	rtos_uart_config_t config;		// Configuration UART0
+	config.baudrate = 115200;
+	config.rx_pin = 16;
+	config.tx_pin = 17;
+	config.pin_mux = kPORT_MuxAlt3;
+	config.uart_number = rtos_uart0;
+	config.port = rtos_uart_portB;
+	rtos_uart_init(config);
+
+	while (1)
+	{
+		xSemaphoreTake(parameters_task.mutex_SEND_UART_freertos, portMAX_DELAY);
+
+		xSemaphoreGive(parameters_task.mutex_SEND_UART_freertos);
+	}
+
 }
